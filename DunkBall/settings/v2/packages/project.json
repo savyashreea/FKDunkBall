@@ -1,3 +1,18 @@
 {
-  "__version__": "1.0.1"
+  "__version__": "1.0.1",
+  "general": {
+    "designResolution": {
+      "fitHeight": true
+    }
+  },
+  "layer": [
+    {
+      "name": "UILayer",
+      "value": 2
+    },
+    {
+      "name": "3DLayer",
+      "value": 1
+    }
+  ]
 }

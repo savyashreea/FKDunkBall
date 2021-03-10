@@ -8,9 +8,13 @@ export class Jump extends Component {
     // dummy = '';
 
     // [2]
-    // @property
-    // serializableDummy = 0;
-    private _pos: Vec3 = new Vec3(0, 0, 0);
+    @property(CCFloat)
+    jumpHeight: number= 0;
+
+    @property(CCFloat)
+    jumpDuration: number= 0;
+
+    
 
     onLoad () {
         // [3]
@@ -28,8 +32,8 @@ export class Jump extends Component {
     onMouseDown(){
         console.log("MOUSE down");
          tween(this.node)
-            .to(1, { position: new Vec3(this.node.getPosition().x, this.node.getPosition().y+50, this.node.getPosition().z) }, { easing: 'cubicOut' })
-            .to(2, { position: new Vec3(this.node.getPosition().x, this.node.getPosition().y-50, this.node.getPosition().z) }, { easing: 'cubicOut' })
+            .to(this.jumpDuration, { position: new Vec3(this.node.getPosition().x, this.node.getPosition().y+this.jumpHeight, this.node.getPosition().z) }, { easing: 'cubicOut' })
+            .to(this.jumpDuration, { position: new Vec3(this.node.getPosition().x, this.node.getPosition().y-this.jumpHeight, this.node.getPosition().z) }, { easing: 'cubicOut' })
             .union()
             .repeatForever()
             .start();

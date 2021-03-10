@@ -1,5 +1,5 @@
 
-import { _decorator, Component, Node, Vec3, tween, systemEvent, SystemEvent, CCFloat } from 'cc';
+import { _decorator, Component, Node, Vec3, tween, systemEvent, SystemEvent, CCFloat, RigidBodyComponent, math } from 'cc';
 const { ccclass, property } = _decorator;
 
 @ccclass('Jump')
@@ -13,31 +13,25 @@ export class Jump extends Component {
 
     @property(CCFloat)
     jumpDuration: number= 0;
-
+    
     
 
     onLoad () {
-        // [3]
-        this.node.on(Node.EventType.MOUSE_DOWN, () => {
-            // tween(this.node)
-            // .to(3, { position: new Vec3(this.node.getPosition().x, this.node.getPosition().y+10, this.node.getPosition().z) }, { easing: 'bounceInOut' })
-            // .union()
-            // .repeat(2) // execute 2 times
-            // .start();
-            console.log("MOUSE down");
-          }, this);
           systemEvent.on(SystemEvent.EventType.MOUSE_DOWN, this.onMouseDown, this);
-       
+    }
+
+    start () {
+        var _rigidBody = this.node.getComponent(RigidBodyComponent)
+        _rigidBody.applyImpulse(new math.Vec3(0,1000,0));
     }
     onMouseDown(){
         console.log("MOUSE down");
-         tween(this.node)
-            .to(this.jumpDuration, { position: new Vec3(this.node.getPosition().x, this.node.getPosition().y+this.jumpHeight, this.node.getPosition().z) }, { easing: 'cubicOut' })
-            .to(this.jumpDuration, { position: new Vec3(this.node.getPosition().x, this.node.getPosition().y-this.jumpHeight, this.node.getPosition().z) }, { easing: 'cubicOut' })
-            .union()
-            .repeatForever()
-            .start();
-
+        //  tween(this.node)
+        //     .to(this.jumpDuration, { position: new Vec3(this.node.getPosition().x, this.node.getPosition().y+this.jumpHeight, this.node.getPosition().z) }, { easing: 'cubicOut' })
+        //     .to(this.jumpDuration, { position: new Vec3(this.node.getPosition().x, this.node.getPosition().y-this.jumpHeight, this.node.getPosition().z) }, { easing: 'cubicOut' })
+        //     .union()
+        //     .repeatForever()
+        //     .start();
         
     }
 
@@ -46,6 +40,10 @@ export class Jump extends Component {
     // }
 }
 
+
+function v3_0(v3_0: any) {
+    throw new Error('Function not implemented.');
+}
 /**
  * [1] Class member could be defined like this.
  * [2] Use `property` decorator if your want the member to be serializable.

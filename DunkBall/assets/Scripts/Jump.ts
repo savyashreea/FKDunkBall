@@ -1,5 +1,5 @@
 
-import { _decorator, Component, Node, Vec3, tween, systemEvent, SystemEvent, CCFloat, RigidBodyComponent, math, Director, Quat } from 'cc';
+import { _decorator, Component, Node, Vec3, tween, systemEvent, SystemEvent, CCFloat, RigidBodyComponent, math, Director, Quat, Collider, ICollisionEvent, CCObject, Scene, SceneAsset, find } from 'cc';
 const { ccclass, property } = _decorator;
 
 @ccclass('Jump')
@@ -13,18 +13,44 @@ export class Jump extends Component {
 
     @property(CCFloat)
     jumpDuration: number= 0;
-    
+
+    @property
+    isCollided = false;
+
+
     private _rigidBody: RigidBodyComponent | undefined;
+    
     
 
     onLoad () {
           systemEvent.on(SystemEvent.EventType.MOUSE_DOWN, this.onMouseDown, this);
           systemEvent.on(SystemEvent.EventType.TOUCH_END, this.onTouchEnd, this);
+
     }
 
     start () {
-       this._rigidBody = this.node.getComponent(RigidBodyComponent)
+       this._rigidBody = this.node.getComponent(RigidBodyComponent);
+       let collider = this.getComponent(Collider);
+       collider.on('onCollisionStay', this.onCollision, this);
     }
+
+    private onCollision (event: ICollisionEvent) {
+        //console.log( event.otherCollider,  event.selfCollider);
+        if(event.otherCollider.node.name=="ColliderForHoop"){
+                console.log("COLLIDED");
+                event.otherCollider.node.active= false;
+                this.isCollided=true; 
+                
+        }
+        if(this.isCollided){
+            if(event.otherCollider.node.name=="Platform"){
+                console.log("COLLIDED with surface");
+               // find("Scene/ColliderForHoop").active= true;
+                this.isCollided=false; 
+            }
+        }
+    }
+    
     onMouseDown(){
         console.log("MOUSE down");
         //  tween(this.node)

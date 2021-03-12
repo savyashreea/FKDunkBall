@@ -2,17 +2,22 @@
   "__version__": "1.0.1",
   "general": {
     "designResolution": {
-      "fitHeight": true
+      "fitHeight": true,
+      "width": 960,
+      "height": 640,
+      "fitWidth": false
     }
   },
-  "layer": [
-    {
-      "name": "UILayer",
-      "value": 2
+  "layer": [],
+  "physics": {
+    "gravity": {
+      "y": -500
     },
-    {
-      "name": "3DLayer",
-      "value": 1
+    "defaultMaterial": {
+      "restitution": 0.6,
+      "rollingFriction": 0.8,
+      "spinningFriction": 1,
+      "friction": 0.5
     }
-  ]
+  }
 }

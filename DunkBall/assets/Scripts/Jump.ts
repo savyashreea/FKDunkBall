@@ -1,5 +1,5 @@
 
-import { _decorator, Component, Node, Vec3, tween, systemEvent, SystemEvent, CCFloat, RigidBodyComponent, math } from 'cc';
+import { _decorator, Component, Node, Vec3, tween, systemEvent, SystemEvent, CCFloat, RigidBodyComponent, math, Director, Quat } from 'cc';
 const { ccclass, property } = _decorator;
 
 @ccclass('Jump')
@@ -14,15 +14,16 @@ export class Jump extends Component {
     @property(CCFloat)
     jumpDuration: number= 0;
     
+    private _rigidBody: RigidBodyComponent | undefined;
     
 
     onLoad () {
           systemEvent.on(SystemEvent.EventType.MOUSE_DOWN, this.onMouseDown, this);
+          systemEvent.on(SystemEvent.EventType.TOUCH_END, this.onTouchEnd, this);
     }
 
     start () {
-        var _rigidBody = this.node.getComponent(RigidBodyComponent)
-        _rigidBody.applyImpulse(new math.Vec3(0,1000,0));
+       this._rigidBody = this.node.getComponent(RigidBodyComponent)
     }
     onMouseDown(){
         console.log("MOUSE down");
@@ -32,18 +33,35 @@ export class Jump extends Component {
         //     .union()
         //     .repeatForever()
         //     .start();
-        
+        this._rigidBody?.applyImpulse(new math.Vec3(3,55,0));
+        // this.node.setRotation(new math.Quat(0,-100,-100,0));
+    }
+    onTouchEnd(){
+        console.log("Touch end");
+        //  tween(this.node)
+        //     .to(this.jumpDuration, { position: new Vec3(this.node.getPosition().x, this.node.getPosition().y+this.jumpHeight, this.node.getPosition().z) }, { easing: 'cubicOut' })
+        //     .to(this.jumpDuration, { position: new Vec3(this.node.getPosition().x, this.node.getPosition().y-this.jumpHeight, this.node.getPosition().z) }, { easing: 'cubicOut' })
+        //     .union()
+        //     .repeatForever()
+        //     .start();
+        this._rigidBody?.applyImpulse(new math.Vec3(3,55,0));
+        // this.node.setRotation(new math.Quat(0,-100,-100,0));
     }
 
-    // update (deltaTime: number) {
-    //     // [4]
-    // }
+
+    update (deltaTime: number) {
+        // [4]
+        //console.log(this.node.getWorldPosition() );
+         if(this.node.getPosition().x>18){
+             this._rigidBody?.setAngularVelocity(new math.Vec3(0,0,0));
+        //     this._rigidBody?.setLinearVelocity(new math.Vec3(0,0,0));
+            this.node.setPosition(new math.Vec3(-18,this.node.getPosition().y,5));
+        }
+        // console.log(this.node.getRotation().x,this.node.getRotation().y-100,this.node.getRotation().z-100,this.node.getRotation().w);
+        // this.node.setRotation(new Quat(0,0,3.14/180*deltaTime));
+    }
 }
 
-
-function v3_0(v3_0: any) {
-    throw new Error('Function not implemented.');
-}
 /**
  * [1] Class member could be defined like this.
  * [2] Use `property` decorator if your want the member to be serializable.

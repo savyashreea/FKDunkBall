@@ -26,6 +26,19 @@ export class Jump extends Component {
     @property({type: Label})
     public scoreLabel: Label|null = null;
 
+    @property({type: Node})
+    public rightBasket: Node|null = null;
+
+    
+    @property({type: Node})
+    public leftBasket: Node|null = null;
+
+    @property({type: Node})
+    public colliderForHoopRight: Node|null = null;
+
+    @property({type: Node})
+    public colliderForHoopLeft: Node|null = null;
+
     private _rigidBody: RigidBodyComponent | undefined;
     
     
@@ -61,19 +74,19 @@ export class Jump extends Component {
         }
         if(this.isCollided){
             if(this.isRightBasketEnabled){
-                var colliderForHoopRight= find("basketball_hoop_Right/ColliderForHoopRight");
+               // var colliderForHoopRight= find("basketball_hoop_Right/ColliderForHoopRight");
                 if(event.otherCollider.node.name=="Platform"){
                     //console.log("COLLIDED with surface");
-                    colliderForHoopRight.active= true;
+                    this.colliderForHoopRight.active= true;
                     this.isCollided=false; 
                     this.toggleBasket();
                 }
             }
             else{
-                var colliderForHoopLeft= find("basketball_hoop_Left/ColliderForHoopLeft");
+                //var colliderForHoopLeft= find("basketball_hoop_Left/ColliderForHoopLeft");
                 if(event.otherCollider.node.name=="Platform"){
                    // console.log("COLLIDED with surface");
-                    colliderForHoopLeft.active= true;
+                    this.colliderForHoopLeft.active= true;
                     this.isCollided=false; 
                     this.toggleBasket();
                 }
@@ -83,30 +96,25 @@ export class Jump extends Component {
     }
 
     toggleBasket(){
-        var rightBasket= find("basketball_hoop_Right");
-        var leftBasket= find("basketball_hoop_Left");
-        var basketHeight=(math.random()*(35-5)+5).toFixed(2);
+        var basketHeight=(math.random()*(35-15)+15).toFixed(2);
 
         if(this.isRightBasketEnabled)
-            this.enabledLeftBasket(rightBasket,leftBasket,basketHeight);
+            this.enabledLeftBasket(basketHeight);
         else
-            this.enabledRightBasket(rightBasket,leftBasket,basketHeight);
+            this.enabledRightBasket(basketHeight);
     }
 
-    enabledRightBasket(rightBasket,leftBasket,basketHeight){
-        leftBasket.active= false;
-        rightBasket.active= true;
-        rightBasket.setPosition( rightBasket.getPosition().x,basketHeight,rightBasket.getPosition().z);
+    enabledRightBasket(basketHeight: string){
+        this.leftBasket.active= false;
+        this.rightBasket.active= true;
+        this.rightBasket.setPosition(this.rightBasket.getPosition().x,basketHeight,this.rightBasket.getPosition().z);
         this.isRightBasketEnabled= true;
     }
-    enabledLeftBasket(rightBasket,leftBasket,basketHeight){
-        
+    enabledLeftBasket(basketHeight: string){
         console.log("Called enabledLeftBasket");
-        leftBasket.active= true;
-        rightBasket.active= false;
-        leftBasket.setPosition( leftBasket.getPosition().x,basketHeight,leftBasket.getPosition().z);
-        
-        console.log(leftBasket.getPosition());
+        this.leftBasket.active= true;
+        this.rightBasket.active= false;
+        this.leftBasket.setPosition( this.leftBasket.getPosition().x,basketHeight,this.leftBasket.getPosition().z);
         this.isRightBasketEnabled= false;
     }
 
@@ -124,9 +132,9 @@ export class Jump extends Component {
         //     .start();
         console.log(this.isRightBasketEnabled)
         if(this.isRightBasketEnabled)
-            this._rigidBody?.applyImpulse(new math.Vec3(4,53,0));
+            this._rigidBody?.applyImpulse(new math.Vec3(4,55,0));
         else
-            this._rigidBody?.applyImpulse(new math.Vec3(-4,53,0));
+            this._rigidBody?.applyImpulse(new math.Vec3(-4,55,0));
     }
 
 

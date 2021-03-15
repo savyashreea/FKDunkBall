@@ -1,5 +1,5 @@
 
-import { _decorator, Component, Node, Vec3, tween, systemEvent, SystemEvent, CCFloat, RigidBodyComponent, math, Director, Quat, Collider, ICollisionEvent, CCObject, Scene, SceneAsset, find, Label, random } from 'cc';
+import { _decorator, Component, Node, Vec3, tween, systemEvent, SystemEvent, CCFloat, RigidBodyComponent, math, Director, Quat, Collider, ICollisionEvent, CCObject, Scene, SceneAsset, find, Label, random, ProgressBar, Tween } from 'cc';
 const { ccclass, property } = _decorator;
 
 enum GameState{
@@ -19,6 +19,9 @@ export class Jump extends Component {
 
     @property(CCFloat)
     jumpDuration: number= 0;
+
+    @property(CCFloat)
+    bubble_num: number= 0;
 
     @property
     isCollided = false;
@@ -50,6 +53,10 @@ export class Jump extends Component {
    
     @property({type: Node})
     public startMenu: Node |null = null;
+
+    @property(ProgressBar)
+    timer: ProgressBar |null = null;
+  
    
     onLoad () {
          this.toggleBasket();   
@@ -203,6 +210,7 @@ export class Jump extends Component {
 
 
     update (deltaTime: number) {
+        this.progress_bar_update();
         if(this.node.getPosition().x>18){
              this._rigidBody?.setAngularVelocity(new math.Vec3(0,0,0));
         //     this._rigidBody?.setLinearVelocity(new math.Vec3(0,0,0));
@@ -216,8 +224,20 @@ export class Jump extends Component {
         // console.log(this.node.getRotation().x,this.node.getRotation().y-100,this.node.getRotation().z-100,this.node.getRotation().w);
         // this.node.setRotation(new Quat(0,0,3.14/180*deltaTime));
     }
-}
 
+
+    progress_bar_update(){
+    this.bubble_num+= 0.2;// This sentence can be placed after the bubble is generated and before the function to update the progress bar is called. Since there is no function to generate the bubble, it is temporarily placed here, and it does not affect the use
+
+    let update_fillRange =this.timer?.progress;
+    if(update_fillRange < 1){
+      update_fillRange = 1 / 100 * this.bubble_num
+    } else {
+      update_fillRange = 1
+    }
+    this.timer.progress = update_fillRange //update_fillRange After the value is calculated, it needs to be re-assigned to the fillRange property of the Sprite component. This is very important (I have ignored this. If there is no assignment, the component's fillRange property value will not be updated, and the progress bar will not go.
+ }
+}
 /**
  * [1] Class member could be defined like this.
  * [2] Use `property` decorator if your want the member to be serializable.

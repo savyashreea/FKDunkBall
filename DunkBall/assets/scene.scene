@@ -554,6 +554,7 @@
     "__prefab": null,
     "jumpHeight": 100,
     "jumpDuration": 5,
+    "isCollided": false,
     "_id": "cffbG/eORKiJkpfsbeinyf"
   },
   {
@@ -714,7 +715,7 @@
     "_priority": 1,
     "_fov": 45,
     "_fovAxis": 0,
-    "_orthoHeight": 320,
+    "_orthoHeight": 332.4401913875598,
     "_near": 1,
     "_far": 2000,
     "_color": {
@@ -944,10 +945,10 @@
     },
     "_alignFlags": 45,
     "_target": null,
-    "_left": 50,
-    "_right": -910,
-    "_top": -590,
-    "_bottom": 50,
+    "_left": 0,
+    "_right": -960,
+    "_top": -640,
+    "_bottom": 0,
     "_horizontalCenter": 0,
     "_verticalCenter": 0,
     "_isAbsLeft": true,

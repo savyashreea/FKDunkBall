@@ -227,13 +227,14 @@ export class Jump extends Component {
 
 
     progress_bar_update(){
-    this.bubble_num+= 0.2;// This sentence can be placed after the bubble is generated and before the function to update the progress bar is called. Since there is no function to generate the bubble, it is temporarily placed here, and it does not affect the use
+    this.bubble_num-=0.03;// This sentence can be placed after the bubble is generated and before the function to update the progress bar is called. Since there is no function to generate the bubble, it is temporarily placed here, and it does not affect the use
 
     let update_fillRange =this.timer?.progress;
-    if(update_fillRange < 1){
+    console.log(this.bubble_num);
+    if(update_fillRange > 0){
       update_fillRange = 1 / 100 * this.bubble_num
     } else {
-      update_fillRange = 1
+      update_fillRange = 0
     }
     this.timer.progress = update_fillRange //update_fillRange After the value is calculated, it needs to be re-assigned to the fillRange property of the Sprite component. This is very important (I have ignored this. If there is no assignment, the component's fillRange property value will not be updated, and the progress bar will not go.
  }

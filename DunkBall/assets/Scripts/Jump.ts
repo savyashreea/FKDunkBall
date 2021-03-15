@@ -1,5 +1,5 @@
 
-import { _decorator, Component, Node, Vec3, tween, systemEvent, SystemEvent, CCFloat, RigidBodyComponent, math, Director, Quat, Collider, ICollisionEvent, CCObject, Scene, SceneAsset, find, Label } from 'cc';
+import { _decorator, Component, Node, Vec3, tween, systemEvent, SystemEvent, CCFloat, RigidBodyComponent, math, Director, Quat, Collider, ICollisionEvent, CCObject, Scene, SceneAsset, find, Label, random } from 'cc';
 const { ccclass, property } = _decorator;
 
 @ccclass('Jump')
@@ -85,22 +85,28 @@ export class Jump extends Component {
     toggleBasket(){
         var rightBasket= find("basketball_hoop_Right");
         var leftBasket= find("basketball_hoop_Left");
+        var basketHeight=(math.random()*(35-5)+5).toFixed(2);
+
         if(this.isRightBasketEnabled)
-            this.enabledLeftBasket(rightBasket,leftBasket);
+            this.enabledLeftBasket(rightBasket,leftBasket,basketHeight);
         else
-            this.enabledRightBasket(rightBasket,leftBasket);
+            this.enabledRightBasket(rightBasket,leftBasket,basketHeight);
     }
 
-    enabledRightBasket(rightBasket,leftBasket){
+    enabledRightBasket(rightBasket,leftBasket,basketHeight){
         leftBasket.active= false;
         rightBasket.active= true;
+        rightBasket.setPosition( rightBasket.getPosition().x,basketHeight,rightBasket.getPosition().z);
         this.isRightBasketEnabled= true;
     }
-    enabledLeftBasket(rightBasket,leftBasket){
+    enabledLeftBasket(rightBasket,leftBasket,basketHeight){
         
         console.log("Called enabledLeftBasket");
         leftBasket.active= true;
         rightBasket.active= false;
+        leftBasket.setPosition( leftBasket.getPosition().x,basketHeight,leftBasket.getPosition().z);
+        
+        console.log(leftBasket.getPosition());
         this.isRightBasketEnabled= false;
     }
 

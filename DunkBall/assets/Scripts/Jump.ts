@@ -2,6 +2,12 @@
 import { _decorator, Component, Node, Vec3, tween, systemEvent, SystemEvent, CCFloat, RigidBodyComponent, math, Director, Quat, Collider, ICollisionEvent, CCObject, Scene, SceneAsset, find, Label, random } from 'cc';
 const { ccclass, property } = _decorator;
 
+enum GameState{
+    GS_INIT,
+    GS_PLAYING,
+    GS_END,
+};
+
 @ccclass('Jump')
 export class Jump extends Component {
     // [1]
@@ -39,23 +45,64 @@ export class Jump extends Component {
     @property({type: Node})
     public colliderForHoopLeft: Node|null = null;
 
+    private currentState: GameState = GameState.GS_INIT;
     private _rigidBody: RigidBodyComponent | undefined;
-    
-    
-
+   
+    @property({type: Node})
+    public startMenu: Node |null = null;
+   
     onLoad () {
-         this.toggleBasket();
-       
-          systemEvent.on(SystemEvent.EventType.MOUSE_DOWN, this.onMouseDown, this);
-          systemEvent.on(SystemEvent.EventType.TOUCH_END, this.onTouchEnd, this);
-
+         this.toggleBasket();   
     }
 
     start () {
-       this.scoreLabel.string = 'Score '+ this.score;
-       this._rigidBody = this.node.getComponent(RigidBodyComponent);
-       let collider = this.getComponent(Collider);
-       collider.on('onCollisionStay', this.onCollision, this);
+        this.curState = GameState.GS_INIT; //initialize game state to GS_INIT
+        this.setInputActive(false);
+
+        this.scoreLabel.string = 'Score '+ this.score;
+        
+        this._rigidBody = this.node.getComponent(RigidBodyComponent);
+
+        let collider = this.getComponent(Collider);
+        collider.on('onCollisionStay', this.onCollision, this);
+    }
+
+    // to change game states
+    set curState (value: GameState) {
+        switch(value) {
+            case GameState.GS_INIT:
+                this.init();
+                break;
+            case GameState.GS_PLAYING:
+                if (this.startMenu) {
+                    this.startMenu.active = false;
+                }
+                setTimeout(() => {
+                    this.setInputActive(true);
+                }, 0.1);
+                break;
+            case GameState.GS_END:
+                break;
+        }
+        this.currentState = value;
+      }
+
+    onStartButtonClicked() {
+        this.curState = GameState.GS_PLAYING;
+    }
+
+    init() {
+        if (this.startMenu) {
+            this.startMenu.active = true;
+        }
+    }
+
+    setInputActive(active: boolean) {
+        if (active) {
+            systemEvent.on(SystemEvent.EventType.MOUSE_UP, this.onMouseDown, this);
+        } else {
+            systemEvent.off(SystemEvent.EventType.MOUSE_UP, this.onMouseDown, this);
+        }
     }
 
     private onCollision (event: ICollisionEvent) {
@@ -65,7 +112,7 @@ export class Jump extends Component {
         }
 
         if(event.otherCollider.node.name=="ColliderForHoopRight" || event.otherCollider.node.name=="ColliderForHoopLeft"){
-                console.log("COLLIDED");
+                //console.log("COLLIDED");
                 this._rigidBody?.setAngularVelocity(new math.Vec3(0,0,0));
                 event.otherCollider.node.active= false;
                 this.isCollided=true; 

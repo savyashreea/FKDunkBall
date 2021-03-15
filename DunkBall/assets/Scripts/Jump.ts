@@ -124,9 +124,9 @@ export class Jump extends Component {
         //     .start();
         console.log(this.isRightBasketEnabled)
         if(this.isRightBasketEnabled)
-            this._rigidBody?.applyImpulse(new math.Vec3(4,65,0));
+            this._rigidBody?.applyImpulse(new math.Vec3(4,53,0));
         else
-            this._rigidBody?.applyImpulse(new math.Vec3(-4,60,0));
+            this._rigidBody?.applyImpulse(new math.Vec3(-4,53,0));
     }
 
 

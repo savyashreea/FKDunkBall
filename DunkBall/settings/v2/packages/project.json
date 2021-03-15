@@ -11,7 +11,7 @@
   "layer": [],
   "physics": {
     "gravity": {
-      "y": -500
+      "y": -400
     },
     "defaultMaterial": {
       "restitution": 0.6,

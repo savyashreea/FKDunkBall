@@ -23,6 +23,7 @@ export class Jump extends Component {
     
 
     onLoad () {
+        
           systemEvent.on(SystemEvent.EventType.MOUSE_DOWN, this.onMouseDown, this);
           systemEvent.on(SystemEvent.EventType.TOUCH_END, this.onTouchEnd, this);
 
@@ -43,9 +44,11 @@ export class Jump extends Component {
                 
         }
         if(this.isCollided){
+            var hoop= find("ColliderForHoop");
+            console.log(hoop);
             if(event.otherCollider.node.name=="Platform"){
                 console.log("COLLIDED with surface");
-               // find("Scene/ColliderForHoop").active= true;
+                hoop.active= true;
                 this.isCollided=false; 
             }
         }

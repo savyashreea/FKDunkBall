@@ -1,5 +1,5 @@
 
-import { _decorator, Component, Node, Vec3, tween, systemEvent, SystemEvent, CCFloat, RigidBodyComponent, math, Director, Quat, Collider, ICollisionEvent, CCObject, Scene, SceneAsset, find } from 'cc';
+import { _decorator, Component, Node, Vec3, tween, systemEvent, SystemEvent, CCFloat, RigidBodyComponent, math, Director, Quat, Collider, ICollisionEvent, CCObject, Scene, SceneAsset, find, Label } from 'cc';
 const { ccclass, property } = _decorator;
 
 @ccclass('Jump')
@@ -20,36 +20,50 @@ export class Jump extends Component {
     @property
     isRightBasketEnabled = true;
 
+    @property(CCFloat)
+    score: number= 0;
+
+    @property({type: Label})
+    public scoreLabel: Label|null = null;
+
     private _rigidBody: RigidBodyComponent | undefined;
     
     
 
     onLoad () {
-        console.log("Called on Load"+ this.isRightBasketEnabled);
+         this.toggleBasket();
+       
           systemEvent.on(SystemEvent.EventType.MOUSE_DOWN, this.onMouseDown, this);
           systemEvent.on(SystemEvent.EventType.TOUCH_END, this.onTouchEnd, this);
 
     }
 
     start () {
+       this.scoreLabel.string = 'Score '+ this.score;
        this._rigidBody = this.node.getComponent(RigidBodyComponent);
        let collider = this.getComponent(Collider);
        collider.on('onCollisionStay', this.onCollision, this);
     }
 
     private onCollision (event: ICollisionEvent) {
+        if(event.otherCollider.node.name=="Platform"){
+            this.node.setPosition(new math.Vec3(this.node.getPosition().x,this.node.getPosition().y,5)); // to stay on z=5 after bounicing
+
+        }
+
         if(event.otherCollider.node.name=="ColliderForHoopRight" || event.otherCollider.node.name=="ColliderForHoopLeft"){
                 console.log("COLLIDED");
                 this._rigidBody?.setAngularVelocity(new math.Vec3(0,0,0));
                 event.otherCollider.node.active= false;
                 this.isCollided=true; 
+                this.updateScore(++this.score);
                 
         }
         if(this.isCollided){
             if(this.isRightBasketEnabled){
                 var colliderForHoopRight= find("basketball_hoop_Right/ColliderForHoopRight");
                 if(event.otherCollider.node.name=="Platform"){
-                    console.log("COLLIDED with surface");
+                    //console.log("COLLIDED with surface");
                     colliderForHoopRight.active= true;
                     this.isCollided=false; 
                     this.toggleBasket();
@@ -58,7 +72,7 @@ export class Jump extends Component {
             else{
                 var colliderForHoopLeft= find("basketball_hoop_Left/ColliderForHoopLeft");
                 if(event.otherCollider.node.name=="Platform"){
-                    console.log("COLLIDED with surface");
+                   // console.log("COLLIDED with surface");
                     colliderForHoopLeft.active= true;
                     this.isCollided=false; 
                     this.toggleBasket();
@@ -89,6 +103,11 @@ export class Jump extends Component {
         rightBasket.active= false;
         this.isRightBasketEnabled= false;
     }
+
+    updateScore(score: number){
+        console.log(score);
+        this.scoreLabel.string = 'Score '+ score;
+    }
     
     onMouseDown(){
         //  tween(this.node)
@@ -99,9 +118,9 @@ export class Jump extends Component {
         //     .start();
         console.log(this.isRightBasketEnabled)
         if(this.isRightBasketEnabled)
-            this._rigidBody?.applyImpulse(new math.Vec3(3,60,0));
+            this._rigidBody?.applyImpulse(new math.Vec3(4,65,0));
         else
-            this._rigidBody?.applyImpulse(new math.Vec3(-3,60,0));
+            this._rigidBody?.applyImpulse(new math.Vec3(-4,60,0));
     }
 
 
@@ -114,6 +133,11 @@ export class Jump extends Component {
         //     .start();
        // this._rigidBody?.applyImpulse(new math.Vec3(3,55,0));
         // this.node.setRotation(new math.Quat(0,-100,-100,0));
+        // console.log(this.isRightBasketEnabled)
+        // if(this.isRightBasketEnabled)
+        //     this._rigidBody?.applyImpulse(new math.Vec3(4,45,0));
+        // else
+        //     this._rigidBody?.applyImpulse(new math.Vec3(-4,60,0));
     }
 
 

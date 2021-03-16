@@ -1,5 +1,5 @@
 
-import { _decorator, Component, Node, Vec3, tween, systemEvent, SystemEvent, CCFloat, RigidBodyComponent, math, Director, Quat, Collider, ICollisionEvent, CCObject, Scene, SceneAsset, find, Label, random, ProgressBar, Tween } from 'cc';
+import { _decorator, Component, Node, Vec3, tween, systemEvent, SystemEvent, CCFloat, RigidBodyComponent, math, Director, Quat, Collider, ICollisionEvent, CCObject, Scene, SceneAsset, find, Label, random, ProgressBar, Tween, director } from 'cc';
 const { ccclass, property } = _decorator;
 
 enum GameState{
@@ -25,6 +25,9 @@ export class Jump extends Component {
 
     @property
     isCollided = false;
+
+    @property
+    gameStarted = false;
 
     @property
     isRightBasketEnabled = true;
@@ -53,6 +56,9 @@ export class Jump extends Component {
    
     @property({type: Node})
     public startMenu: Node |null = null;
+
+    @property({type: Node})
+    public GameOverMenu: Node |null = null;
 
     @property(ProgressBar)
     timer: ProgressBar |null = null;
@@ -86,9 +92,15 @@ export class Jump extends Component {
                 }
                 setTimeout(() => {
                     this.setInputActive(true);
+                    this.gameStarted=true;
                 }, 0.1);
+                console.log("game playing");
                 break;
             case GameState.GS_END:
+                this.setInputActive(false);
+                if (this.GameOverMenu) {
+                    this.GameOverMenu.active = true;
+                }
                 break;
         }
         this.currentState = value;
@@ -96,6 +108,12 @@ export class Jump extends Component {
 
     onStartButtonClicked() {
         this.curState = GameState.GS_PLAYING;
+    }
+
+    onReplayButtonClicked() {
+        if (this.GameOverMenu) {
+            this.GameOverMenu.active = false;
+        }
     }
 
     init() {
@@ -123,7 +141,7 @@ export class Jump extends Component {
                 this._rigidBody?.setAngularVelocity(new math.Vec3(0,0,0));
                 event.otherCollider.node.active= false;
                 this.isCollided=true; 
-                this.updateScore(++this.score);
+                this.onGoal();
                 
         }
         if(this.isCollided){
@@ -147,6 +165,10 @@ export class Jump extends Component {
             }
 
         }
+    }
+    onGoal(){
+        this.updateScore(++this.score);
+        this.bubble_num+=20;
     }
 
     toggleBasket(){
@@ -210,7 +232,8 @@ export class Jump extends Component {
 
 
     update (deltaTime: number) {
-        this.progress_bar_update();
+        if(this.gameStarted)
+             this.progress_bar_update();
         if(this.node.getPosition().x>18){
              this._rigidBody?.setAngularVelocity(new math.Vec3(0,0,0));
         //     this._rigidBody?.setLinearVelocity(new math.Vec3(0,0,0));
@@ -230,11 +253,12 @@ export class Jump extends Component {
     this.bubble_num-=0.03;// This sentence can be placed after the bubble is generated and before the function to update the progress bar is called. Since there is no function to generate the bubble, it is temporarily placed here, and it does not affect the use
 
     let update_fillRange =this.timer?.progress;
-    console.log(this.bubble_num);
+    //console.log(this.bubble_num);
     if(update_fillRange > 0){
       update_fillRange = 1 / 100 * this.bubble_num
     } else {
       update_fillRange = 0
+      
     }
     this.timer.progress = update_fillRange //update_fillRange After the value is calculated, it needs to be re-assigned to the fillRange property of the Sprite component. This is very important (I have ignored this. If there is no assignment, the component's fillRange property value will not be updated, and the progress bar will not go.
  }
@@ -249,3 +273,5 @@ export class Jump extends Component {
  * Learn more about CCClass: https://docs.cocos.com/creator/3.0/manual/en/scripting/ccclass.html
  * Learn more about life-cycle callbacks: https://docs.cocos.com/creator/3.0/manual/en/scripting/life-cycle-callbacks.html
  */
+
+

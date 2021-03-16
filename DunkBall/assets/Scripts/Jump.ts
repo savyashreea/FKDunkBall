@@ -21,7 +21,7 @@ export class Jump extends Component {
     jumpDuration: number= 0;
 
     @property(CCFloat)
-    bubble_num: number= 0;
+    progressTimerIncrement: number= 0;
 
     @property
     isCollided = false;
@@ -138,7 +138,7 @@ export class Jump extends Component {
 
         if(event.otherCollider.node.name=="ColliderForHoopRight" || event.otherCollider.node.name=="ColliderForHoopLeft"){
                 //console.log("COLLIDED");
-                this._rigidBody?.setAngularVelocity(new math.Vec3(0,0,0));
+                this._rigidBody?.setLinearVelocity(new math.Vec3(0,0,0));
                 event.otherCollider.node.active= false;
                 this.isCollided=true; 
                 this.onGoal();
@@ -168,7 +168,10 @@ export class Jump extends Component {
     }
     onGoal(){
         this.updateScore(++this.score);
-        this.bubble_num+=20;
+        this.progressTimerIncrement+=20;
+        if (this.progressTimerIncrement>100){
+            this.progressTimerIncrement=100;
+        }
     }
 
     toggleBasket(){
@@ -200,13 +203,12 @@ export class Jump extends Component {
     }
     
     onMouseDown(){
-        //  tween(this.node)
-        //     .to(this.jumpDuration, { position: new Vec3(this.node.getPosition().x, this.node.getPosition().y+this.jumpHeight, this.node.getPosition().z) }, { easing: 'cubicOut' })
-        //     .to(this.jumpDuration, { position: new Vec3(this.node.getPosition().x, this.node.getPosition().y-this.jumpHeight, this.node.getPosition().z) }, { easing: 'cubicOut' })
-        //     .union()
-        //     .repeatForever()
-        //     .start();
         console.log(this.isRightBasketEnabled)
+        tween(this.timer?.node)
+            .to(0.25, { scale: new Vec3(1,2,1) }, { easing: 'cubicOut' })
+            .to(0.5, { scale: new Vec3(1,1,1) }, { easing: 'cubicOut' })
+            .repeatForever()
+            .start();
         if(this.isRightBasketEnabled)
             this._rigidBody?.applyImpulse(new math.Vec3(4,55,0));
         else
@@ -215,19 +217,7 @@ export class Jump extends Component {
 
 
     onTouchEnd(){
-        //  tween(this.node)
-        //     .to(this.jumpDuration, { position: new Vec3(this.node.getPosition().x, this.node.getPosition().y+this.jumpHeight, this.node.getPosition().z) }, { easing: 'cubicOut' })
-        //     .to(this.jumpDuration, { position: new Vec3(this.node.getPosition().x, this.node.getPosition().y-this.jumpHeight, this.node.getPosition().z) }, { easing: 'cubicOut' })
-        //     .union()
-        //     .repeatForever()
-        //     .start();
-       // this._rigidBody?.applyImpulse(new math.Vec3(3,55,0));
-        // this.node.setRotation(new math.Quat(0,-100,-100,0));
-        // console.log(this.isRightBasketEnabled)
-        // if(this.isRightBasketEnabled)
-        //     this._rigidBody?.applyImpulse(new math.Vec3(4,45,0));
-        // else
-        //     this._rigidBody?.applyImpulse(new math.Vec3(-4,60,0));
+       
     }
 
 
@@ -236,27 +226,25 @@ export class Jump extends Component {
              this.progress_bar_update();
         if(this.node.getPosition().x>18){
              this._rigidBody?.setAngularVelocity(new math.Vec3(0,0,0));
-        //     this._rigidBody?.setLinearVelocity(new math.Vec3(0,0,0));
             this.node.setPosition(new math.Vec3(-18,this.node.getPosition().y,5));
         }
         else if(this.node.getPosition().x<-18){
             this._rigidBody?.setAngularVelocity(new math.Vec3(0,0,0));
-       //     this._rigidBody?.setLinearVelocity(new math.Vec3(0,0,0));
            this.node.setPosition(new math.Vec3(18,this.node.getPosition().y,5));
        }
-        // console.log(this.node.getRotation().x,this.node.getRotation().y-100,this.node.getRotation().z-100,this.node.getRotation().w);
-        // this.node.setRotation(new Quat(0,0,3.14/180*deltaTime));
     }
 
 
     progress_bar_update(){
-    this.bubble_num-=0.03;// This sentence can be placed after the bubble is generated and before the function to update the progress bar is called. Since there is no function to generate the bubble, it is temporarily placed here, and it does not affect the use
+    this.progressTimerIncrement-=0.03;// This sentence can be placed after the bubble is generated and before the function to update the progress bar is called. Since there is no function to generate the bubble, it is temporarily placed here, and it does not affect the use
 
     let update_fillRange =this.timer?.progress;
-    //console.log(this.bubble_num);
+    //console.log(this.progressTimerIncrement);
     if(update_fillRange > 0){
-      update_fillRange = 1 / 100 * this.bubble_num
-    } else {
+      update_fillRange = 1 / 100 * this.progressTimerIncrement
+      
+    } 
+    else {
       update_fillRange = 0
       
     }
